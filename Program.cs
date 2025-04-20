@@ -7,6 +7,9 @@ namespace pr16_KM
     {
         static void Main(string[] args)
         {
+            string text = "";
+            int count = 0;
+            
             Console.WriteLine("Введите количество строк");
             int n = Convert.ToInt32(Console.ReadLine());
 
@@ -27,10 +30,16 @@ namespace pr16_KM
                     Console.WriteLine($"Строка: {s}");
 
                     string[] elements = s.Split('/');
-
-                    Num(elements);
-                    BeforeSlash(elements);
-                    AfterSlash(elements);
+                    
+                    Console.WriteLine(Num(elements, ref count));
+                    Console.WriteLine($"Количество цифр: {count}");
+                    Console.WriteLine($"Элементы до первого '/':\n{BeforeSlash(elements)}");
+                    Console.WriteLine($"Элементы после '/'::\n{AfterSlash(elements)}");
+                    
+                    text = $"Строка: {s}\nКоличество цифр:{count}\n{Num(elements, ref count)}\nЭлементы до первого '/':\n{BeforeSlash(elements)}\nЭлементы после '/'::\n{AfterSlash(elements)}";
+                    
+                    string filePath = "Result.txt";
+                    File.WriteAllText(filePath, text);
                 }
                 else
                 {
@@ -39,45 +48,51 @@ namespace pr16_KM
             }
         }
 
-        static void Num(string[] s) // определение цифр
+        static string Num(string[] s, ref int count) // определение цифр
         {
             var text = "";
-            
+        
             var num = s.SelectMany(s => s.Where(c => Char.IsDigit(c))).ToArray();
-
-            Console.WriteLine($"Количество чисел: {num.Count()}");
+        
+            count = num.Count();
+        
             foreach (var n in num)
             {
                 text += $"{n} ";
             }
-            Console.WriteLine(text);
+            return text;
         }
-        static void BeforeSlash(string[] s) // вывод до слэша
+        static string BeforeSlash(string[] s) // вывод до слэша
         {
             string text = "";
-
-            Console.WriteLine("Элементы до первого '/':");
-
+        
             text = s[0];
-
+        
             if (text != string.Empty)
             {
-                Console.WriteLine(text);
+                return text;
             }
             else
             {
-                Console.WriteLine("Нет элементов");
+                return "Нет элементов";
             }
         }
-        static void AfterSlash(string[] s) // вывод после слэша
+        static string AfterSlash(string[] s) // вывод после слэша
         {
-            Console.WriteLine("Элементы после '/':");
-
+            if (s.Length <= 1)
+                return "";
+        
+            string text = "";
+        
             for (int i = 1; i < s.Length; i++)
             {
-                Console.WriteLine(s[i].Select(c => char.IsUpper(c) ?
+                string transform = new string (s[i].Select(c => char.IsUpper(c) ?
                 char.ToLower(c) : char.IsLower(c) ? char.ToUpper(c) : c).ToArray());
+        
+                text += transform;
             }
+        
+            return text;
         }
     }
 }
